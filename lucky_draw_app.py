@@ -50,13 +50,13 @@ if uploaded_file:
                 while st.session_state.drawing:
                     pick = random.choice(st.session_state.remaining_entries)
                     st.session_state.current_display = pick
-                    # LARGE, bold, centered ID
+                    # SUPER FAST rolling ID
                     placeholder.markdown(f"""
-                    <div style='color:#00543D; font-size:80px; font-weight:bold; text-align:center;'>
+                    <div style='color:#00543D; font-size:90px; font-weight:bold; text-align:center;'>
                         {pick[0]}
                     </div>
                     """, unsafe_allow_html=True)
-                    time.sleep(0.003)  # ultra fast
+                    time.sleep(0.0001)  # hyper quick
                     st.rerun()
 
             if not st.session_state.drawing and st.session_state.current_display:
@@ -66,9 +66,9 @@ if uploaded_file:
                 if winner in st.session_state.remaining_entries:
                     st.session_state.remaining_entries.remove(winner)
 
-                # Winner big pop-up style
+                # Winner popup style
                 placeholder.markdown(f"""
-                <div style='color:#00543D; font-size:40px; text-align:center;'>
+                <div style='color:#00543D; font-size:45px; text-align:center;'>
                     🏆 <strong>Winner!</strong><br><br>
                     <strong>ID:</strong> {winner[0]}<br>
                     <strong>Name:</strong> {winner[1]}<br>
