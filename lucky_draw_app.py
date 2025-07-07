@@ -2,8 +2,18 @@ import streamlit as st
 import pandas as pd
 import random
 import time
+import base64
 
 st.set_page_config(page_title="BAHL HAJJ Balloting", layout="centered")
+
+# Helper to embed image as base64 for HTML <img src=...>
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        b64_data = base64.b64encode(img_file.read()).decode()
+    return f"data:image/png;base64,{b64_data}"
+
+# Load Hajj logo once as base64
+hajj_img_data = get_base64_image("hajj.png")
 
 # Logo & title side by side
 col_logo, col_title = st.columns([1, 5])
@@ -78,10 +88,10 @@ if uploaded_file:
                 </div>
 
                 <div style="position:relative;height:300px;">
-                    <img src='hajj.png' style='position:absolute; bottom:0; left:20%; animation: floatUp 4s ease-in infinite;' width='50'>
-                    <img src='hajj.png' style='position:absolute; bottom:0; left:40%; animation: floatUp 5s ease-in infinite;' width='50'>
-                    <img src='hajj.png' style='position:absolute; bottom:0; left:60%; animation: floatUp 4.5s ease-in infinite;' width='50'>
-                    <img src='hajj.png' style='position:absolute; bottom:0; left:80%; animation: floatUp 6s ease-in infinite;' width='50'>
+                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:20%; animation: floatUp 4s ease-in infinite;' width='50'>
+                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:40%; animation: floatUp 5s ease-in infinite;' width='50'>
+                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:60%; animation: floatUp 4.5s ease-in infinite;' width='50'>
+                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:80%; animation: floatUp 6s ease-in infinite;' width='50'>
                 </div>
 
                 <style>
