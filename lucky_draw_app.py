@@ -5,7 +5,7 @@ import time
 
 st.set_page_config(page_title="BAHL HAJJ Balloting", layout="centered")
 
-# Horizontal line with logo and title
+# Logo & title side by side
 col_logo, col_title = st.columns([1, 5])
 with col_logo:
     st.image("Bank_al_habib_logo.png", width=120)
@@ -50,13 +50,13 @@ if uploaded_file:
                 while st.session_state.drawing:
                     pick = random.choice(st.session_state.remaining_entries)
                     st.session_state.current_display = pick
-                    # Only show ID for fast draw
+                    # LARGE, bold, centered ID
                     placeholder.markdown(f"""
-                    <div style='color:#00543D; font-size:50px; text-align:center;'>
-                        ID: {pick[0]}
+                    <div style='color:#00543D; font-size:80px; font-weight:bold; text-align:center;'>
+                        {pick[0]}
                     </div>
                     """, unsafe_allow_html=True)
-                    time.sleep(0.005)
+                    time.sleep(0.003)  # ultra fast
                     st.rerun()
 
             if not st.session_state.drawing and st.session_state.current_display:
@@ -66,14 +66,15 @@ if uploaded_file:
                 if winner in st.session_state.remaining_entries:
                     st.session_state.remaining_entries.remove(winner)
 
+                # Winner big pop-up style
                 placeholder.markdown(f"""
-                <div style='color:#00543D;'>
-                <h2>🏆 Winner!</h2>
-                <strong>ID:</strong> {winner[0]}<br>
-                <strong>Name:</strong> {winner[1]}<br>
-                <strong>Designation:</strong> {winner[2]}<br>
-                <strong>Zone:</strong> {winner[3]}<br>
-                <strong>Branch:</strong> {winner[4]}
+                <div style='color:#00543D; font-size:40px; text-align:center;'>
+                    🏆 <strong>Winner!</strong><br><br>
+                    <strong>ID:</strong> {winner[0]}<br>
+                    <strong>Name:</strong> {winner[1]}<br>
+                    <strong>Designation:</strong> {winner[2]}<br>
+                    <strong>Zone:</strong> {winner[3]}<br>
+                    <strong>Branch:</strong> {winner[4]}
                 </div>
                 """, unsafe_allow_html=True)
                 st.balloons()
