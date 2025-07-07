@@ -56,7 +56,7 @@ if uploaded_file:
                     **Branch:** {pick[4]}
                     """)
                     time.sleep(0.01)  # super fast rolling
-                    st.experimental_rerun()
+                    st.rerun()
 
             # after stop, finalize winner
             if not st.session_state.drawing and st.session_state.current_display:
