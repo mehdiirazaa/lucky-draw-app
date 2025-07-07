@@ -7,11 +7,16 @@ st.set_page_config(page_title="BAHL HAJJ Balloting", layout="centered")
 st.title("🎉 BAHL HAJJ Balloting")
 st.write("Upload an Excel file with entries. Each row should have columns like Name, Designation, Branch.")
 
+# Cache Excel loading so it happens once
+@st.cache_data
+def load_excel(file):
+    return pd.read_excel(file)
+
 uploaded_file = st.file_uploader("📂 Upload Excel File", type=["xlsx", "xls"])
 
 if uploaded_file:
     try:
-        df = pd.read_excel(uploaded_file)
+        df = load_excel(uploaded_file)
         if df.empty:
             st.warning("The uploaded file is empty.")
         else:
@@ -44,7 +49,7 @@ if uploaded_file:
                         if winner in st.session_state.remaining_entries:
                             st.session_state.remaining_entries.remove(winner)
 
-            # AUTOREFRESH every 100ms if drawing
+            # AUTOREFRESH every 100ms (0.1s) if drawing
             if st.session_state.drawing:
                 st_autorefresh(interval=100, key="refresh")
 
@@ -68,6 +73,7 @@ if uploaded_file:
                 placeholder.markdown(winner_text)
                 st.balloons()
 
+            # Show all winners so far
             if st.session_state.winners:
                 st.markdown("### 📝 Winners so far:")
                 for idx, winner in enumerate(st.session_state.winners, 1):
