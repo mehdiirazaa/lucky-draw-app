@@ -3,24 +3,25 @@ import pandas as pd
 import random
 import time
 
-st.set_page_config(page_title="🎁 Lucky Draw", layout="centered")
-st.title("🎉 Lucky Draw App")
-st.write("Upload an Excel file with entries (multiple columns supported).")
+st.set_page_config(page_title="BAHL HAJJ Balloting", layout="centered")
+st.title("🎉 BAHL HAJJ Balloting")
+st.write("Upload an Excel file with entries. Each row should have columns like Name, Designation, Branch.")
 
 uploaded_file = st.file_uploader("📂 Upload Excel File", type=["xlsx", "xls"])
 
 if uploaded_file:
     try:
         df = pd.read_excel(uploaded_file)
+
         if df.empty:
             st.warning("The uploaded file is empty.")
         else:
-            st.success(f"Loaded {len(df)} entries.")
+            st.success(f"Loaded {len(df)} entries from your file.")
 
-            # Prepare combined string for each row
-            entries = df.apply(lambda row: " | ".join(str(val) for val in row if pd.notna(val)), axis=1).tolist()
+            # Prepare entries as lists (each item is a list of cell values)
+            entries = df.apply(lambda row: [str(val) for val in row if pd.notna(val)], axis=1).tolist()
 
-            # Initialize session state only once
+            # Session state init
             if 'remaining_entries' not in st.session_state:
                 st.session_state.remaining_entries = entries.copy()
             if 'drawing' not in st.session_state:
@@ -30,6 +31,7 @@ if uploaded_file:
             if 'winners' not in st.session_state:
                 st.session_state.winners = []
 
+            # Buttons
             col1, col2 = st.columns(2)
             if col1.button("▶ Start Draw"):
                 if not st.session_state.remaining_entries:
@@ -41,10 +43,8 @@ if uploaded_file:
                     st.session_state.drawing = False
                     winner = st.session_state.current_display
                     if winner:
-                        # Make sure we don't add duplicates
                         if winner not in st.session_state.winners:
                             st.session_state.winners.append(winner)
-                        # Also remove from remaining pool
                         if winner in st.session_state.remaining_entries:
                             st.session_state.remaining_entries.remove(winner)
 
@@ -54,20 +54,34 @@ if uploaded_file:
                 while st.session_state.drawing:
                     pick = random.choice(st.session_state.remaining_entries)
                     st.session_state.current_display = pick
-                    placeholder.markdown(f"### 🎯 Drawing: **{pick}**")
+                    placeholder.markdown(f"### 🎯 Drawing: **{' | '.join(pick)}**")
                     time.sleep(0.02)
-                    st.rerun()()
+                    st.rerun()
 
-            # Show current winner
+            # Show winner nicely
             if st.session_state.current_display and st.session_state.current_display in st.session_state.winners:
-                placeholder.markdown(f"## 🏆 Winner: **{st.session_state.current_display}** 🎉")
+                winner_details = st.session_state.current_display
+                winner_text = f"""
+                ## 🏆 Winner!
+
+                **Name:** {winner_details[0]}  
+                **Designation:** {winner_details[1] if len(winner_details) > 1 else ''}  
+                **Branch:** {winner_details[2] if len(winner_details) > 2 else ''}
+                """
+                placeholder.markdown(winner_text)
                 st.balloons()
 
-            # Show all winners
+            # Show all winners so far
             if st.session_state.winners:
                 st.markdown("### 📝 Winners so far:")
                 for idx, winner in enumerate(st.session_state.winners, 1):
-                    st.markdown(f"{idx}. **{winner}**")
+                    winner_info = f"""
+                    **{idx}.**
+                    - Name: {winner[0]}
+                    - Designation: {winner[1] if len(winner) > 1 else ''}
+                    - Branch: {winner[2] if len(winner) > 2 else ''}
+                    """
+                    st.markdown(winner_info)
 
     except Exception as e:
         st.error(f"Error reading Excel file: {e}")
