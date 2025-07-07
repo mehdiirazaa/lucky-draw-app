@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import random
-import time
+from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(page_title="BAHL HAJJ Balloting", layout="centered")
 st.title("🎉 BAHL HAJJ Balloting")
@@ -12,11 +12,10 @@ uploaded_file = st.file_uploader("📂 Upload Excel File", type=["xlsx", "xls"])
 if uploaded_file:
     try:
         df = pd.read_excel(uploaded_file)
-
         if df.empty:
             st.warning("The uploaded file is empty.")
         else:
-            st.success(f"Loaded {len(df)} entries from your file.")
+            st.success(f"Loaded {len(df)} entries.")
 
             entries = df.apply(lambda row: [str(val) for val in row if pd.notna(val)], axis=1).tolist()
 
@@ -32,7 +31,7 @@ if uploaded_file:
             col1, col2 = st.columns(2)
             if col1.button("▶ Start Draw"):
                 if not st.session_state.remaining_entries:
-                    st.warning("No more entries left to draw from.")
+                    st.warning("No more entries left.")
                 else:
                     st.session_state.drawing = True
             if col2.button("⏹ Stop Draw"):
@@ -45,18 +44,19 @@ if uploaded_file:
                         if winner in st.session_state.remaining_entries:
                             st.session_state.remaining_entries.remove(winner)
 
-            placeholder = st.empty()
+            # AUTOREFRESH every 100ms if drawing
+            if st.session_state.drawing:
+                st_autorefresh(interval=100, key="refresh")
 
-            # Fast refresh display
-            if st.session_state.drawing and st.session_state.remaining_entries:
                 pick = random.choice(st.session_state.remaining_entries)
                 st.session_state.current_display = pick
-                placeholder.markdown(f"### 🎯 Drawing: **{' | '.join(pick)}**")
-                time.sleep(0.005)  # keep minimal sleep
-                st.rerun()
 
-            # Show winner formatted
-            if st.session_state.current_display and st.session_state.current_display in st.session_state.winners:
+            placeholder = st.empty()
+
+            # Show drawing or winner
+            if st.session_state.drawing and st.session_state.remaining_entries:
+                placeholder.markdown(f"### 🎯 Drawing: **{' | '.join(st.session_state.current_display)}**")
+            elif st.session_state.current_display and st.session_state.current_display in st.session_state.winners:
                 winner_details = st.session_state.current_display
                 winner_text = f"""
                 ## 🏆 Winner!
@@ -68,17 +68,15 @@ if uploaded_file:
                 placeholder.markdown(winner_text)
                 st.balloons()
 
-            # Show all winners
             if st.session_state.winners:
                 st.markdown("### 📝 Winners so far:")
                 for idx, winner in enumerate(st.session_state.winners, 1):
-                    winner_info = f"""
+                    st.markdown(f"""
                     **{idx}.**
                     - Name: {winner[0]}
                     - Designation: {winner[1] if len(winner) > 1 else ''}
                     - Branch: {winner[2] if len(winner) > 2 else ''}
-                    """
-                    st.markdown(winner_info)
+                    """)
 
     except Exception as e:
         st.error(f"Error reading Excel file: {e}")
