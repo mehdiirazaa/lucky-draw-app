@@ -56,7 +56,7 @@ if uploaded_file:
                         {pick[0]}
                     </div>
                     """, unsafe_allow_html=True)
-                    time.sleep(0.001)  # hyper quick
+                    time.sleep(0.001)  # ultra quick
                     st.rerun()
 
             if not st.session_state.drawing and st.session_state.current_display:
@@ -66,7 +66,7 @@ if uploaded_file:
                 if winner in st.session_state.remaining_entries:
                     st.session_state.remaining_entries.remove(winner)
 
-                # Winner popup style
+                # Winner popup style with floating Hajj logos
                 placeholder.markdown(f"""
                 <div style='color:#00543D; font-size:45px; text-align:center;'>
                     🏆 <strong>Winner!</strong><br><br>
@@ -76,8 +76,21 @@ if uploaded_file:
                     <strong>Zone:</strong> {winner[3]}<br>
                     <strong>Branch:</strong> {winner[4]}
                 </div>
+
+                <div style="position:relative;height:300px;">
+                    <img src='hajj.png' style='position:absolute; bottom:0; left:20%; animation: floatUp 4s ease-in infinite;' width='50'>
+                    <img src='hajj.png' style='position:absolute; bottom:0; left:40%; animation: floatUp 5s ease-in infinite;' width='50'>
+                    <img src='hajj.png' style='position:absolute; bottom:0; left:60%; animation: floatUp 4.5s ease-in infinite;' width='50'>
+                    <img src='hajj.png' style='position:absolute; bottom:0; left:80%; animation: floatUp 6s ease-in infinite;' width='50'>
+                </div>
+
+                <style>
+                @keyframes floatUp {
+                    0% {{ transform: translateY(0); opacity: 1; }}
+                    100% {{ transform: translateY(-300px); opacity: 0; }}
+                }}
+                </style>
                 """, unsafe_allow_html=True)
-                st.balloons()
 
             if st.session_state.winners:
                 st.markdown("<h3 style='color:#00543D;'>📝 Winners so far:</h3>", unsafe_allow_html=True)
