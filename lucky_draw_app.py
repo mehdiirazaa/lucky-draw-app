@@ -56,7 +56,7 @@ if uploaded_file:
                     st.session_state.current_display = pick
                     placeholder.markdown(f"### 🎯 Drawing: **{pick}**")
                     time.sleep(0.02)
-                    st.experimental_rerun()
+                    st.rerun()()
 
             # Show current winner
             if st.session_state.current_display and st.session_state.current_display in st.session_state.winners:
