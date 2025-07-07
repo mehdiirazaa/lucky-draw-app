@@ -56,7 +56,7 @@ if uploaded_file:
                         {pick[0]}
                     </div>
                     """, unsafe_allow_html=True)
-                    time.sleep(0.05)  # hyper quick
+                    time.sleep(0.001)  # hyper quick
                     st.rerun()
 
             if not st.session_state.drawing and st.session_state.current_display:
