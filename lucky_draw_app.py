@@ -18,10 +18,10 @@ if uploaded_file:
         else:
             st.success(f"Loaded {len(df)} entries from your file.")
 
-            # Prepare entries as lists (each item is a list of cell values)
+            # Prepare entries as list of cell values per row
             entries = df.apply(lambda row: [str(val) for val in row if pd.notna(val)], axis=1).tolist()
 
-            # Session state init
+            # Initialize session state
             if 'remaining_entries' not in st.session_state:
                 st.session_state.remaining_entries = entries.copy()
             if 'drawing' not in st.session_state:
@@ -55,10 +55,10 @@ if uploaded_file:
                     pick = random.choice(st.session_state.remaining_entries)
                     st.session_state.current_display = pick
                     placeholder.markdown(f"### 🎯 Drawing: **{' | '.join(pick)}**")
-                    time.sleep(0.02)
+                    time.sleep(0.005)  # ultra fast
                     st.rerun()
 
-            # Show winner nicely
+            # Show current winner nicely on separate lines
             if st.session_state.current_display and st.session_state.current_display in st.session_state.winners:
                 winner_details = st.session_state.current_display
                 winner_text = f"""
