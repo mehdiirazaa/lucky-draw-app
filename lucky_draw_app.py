@@ -12,8 +12,8 @@ def get_base64_image(image_path):
         b64_data = base64.b64encode(img_file.read()).decode()
     return f"data:image/png;base64,{b64_data}"
 
-# Load Hajj logo once as base64
-hajj_img_data = get_base64_image("hajj.png")
+# Load new Hajj logo once as base64
+hajj_img_data = get_base64_image("hajj1.png")
 
 # Logo & title side by side
 col_logo, col_title = st.columns([1, 5])
@@ -76,7 +76,7 @@ if uploaded_file:
                 if winner in st.session_state.remaining_entries:
                     st.session_state.remaining_entries.remove(winner)
 
-                # Winner popup style with floating Hajj logos
+                # Winner popup style with floating new Hajj logos (larger)
                 placeholder.markdown(f"""
                 <div style='color:#00543D; font-size:45px; text-align:center;'>
                     🏆 <strong>Winner!</strong><br><br>
@@ -88,10 +88,10 @@ if uploaded_file:
                 </div>
 
                 <div style="position:relative;height:300px;">
-                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:20%; animation: floatUp 4s ease-in infinite;' width='50'>
-                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:40%; animation: floatUp 5s ease-in infinite;' width='50'>
-                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:60%; animation: floatUp 4.5s ease-in infinite;' width='50'>
-                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:80%; animation: floatUp 6s ease-in infinite;' width='50'>
+                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:20%; animation: floatUp 4s ease-in infinite;' width='70'>
+                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:40%; animation: floatUp 5s ease-in infinite;' width='70'>
+                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:60%; animation: floatUp 4.5s ease-in infinite;' width='70'>
+                    <img src='{hajj_img_data}' style='position:absolute; bottom:0; left:80%; animation: floatUp 6s ease-in infinite;' width='70'>
                 </div>
 
                 <style>
