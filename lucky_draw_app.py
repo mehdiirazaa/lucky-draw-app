@@ -18,10 +18,8 @@ if uploaded_file:
         else:
             st.success(f"Loaded {len(df)} entries from your file.")
 
-            # Prepare entries as list of cell values per row
             entries = df.apply(lambda row: [str(val) for val in row if pd.notna(val)], axis=1).tolist()
 
-            # Initialize session state
             if 'remaining_entries' not in st.session_state:
                 st.session_state.remaining_entries = entries.copy()
             if 'drawing' not in st.session_state:
@@ -31,7 +29,6 @@ if uploaded_file:
             if 'winners' not in st.session_state:
                 st.session_state.winners = []
 
-            # Buttons
             col1, col2 = st.columns(2)
             if col1.button("▶ Start Draw"):
                 if not st.session_state.remaining_entries:
@@ -48,17 +45,17 @@ if uploaded_file:
                         if winner in st.session_state.remaining_entries:
                             st.session_state.remaining_entries.remove(winner)
 
-            # Draw loop
             placeholder = st.empty()
-            if st.session_state.drawing and st.session_state.remaining_entries:
-                while st.session_state.drawing:
-                    pick = random.choice(st.session_state.remaining_entries)
-                    st.session_state.current_display = pick
-                    placeholder.markdown(f"### 🎯 Drawing: **{' | '.join(pick)}**")
-                    time.sleep(0.005)  # ultra fast
-                    st.rerun()
 
-            # Show current winner nicely on separate lines
+            # Fast refresh display
+            if st.session_state.drawing and st.session_state.remaining_entries:
+                pick = random.choice(st.session_state.remaining_entries)
+                st.session_state.current_display = pick
+                placeholder.markdown(f"### 🎯 Drawing: **{' | '.join(pick)}**")
+                time.sleep(0.005)  # keep minimal sleep
+                st.rerun()
+
+            # Show winner formatted
             if st.session_state.current_display and st.session_state.current_display in st.session_state.winners:
                 winner_details = st.session_state.current_display
                 winner_text = f"""
@@ -71,7 +68,7 @@ if uploaded_file:
                 placeholder.markdown(winner_text)
                 st.balloons()
 
-            # Show all winners so far
+            # Show all winners
             if st.session_state.winners:
                 st.markdown("### 📝 Winners so far:")
                 for idx, winner in enumerate(st.session_state.winners, 1):
