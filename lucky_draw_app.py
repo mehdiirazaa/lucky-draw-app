@@ -5,10 +5,13 @@ import time
 
 st.set_page_config(page_title="BAHL HAJJ Balloting", layout="centered")
 
-# Load your logos
-st.image("Bank_al_habib_logo.png", width=200)
-st.image("hajj.png", width=100)
-st.markdown("<h1 style='color:#00543D;'>🎉 BAHL HAJJ Balloting</h1>", unsafe_allow_html=True)
+# Horizontal line with logo and title
+col_logo, col_title = st.columns([1, 5])
+with col_logo:
+    st.image("Bank_al_habib_logo.png", width=120)
+with col_title:
+    st.markdown("<h1 style='color:#00543D;'>BAHL HAJJ Balloting</h1>", unsafe_allow_html=True)
+
 st.write("Upload an Excel file with columns: **ID, Name, Designation, Zone, Branch**")
 
 @st.cache_data
@@ -47,13 +50,13 @@ if uploaded_file:
                 while st.session_state.drawing:
                     pick = random.choice(st.session_state.remaining_entries)
                     st.session_state.current_display = pick
-                    # only show ID for fast easy read
+                    # Only show ID for fast draw
                     placeholder.markdown(f"""
                     <div style='color:#00543D; font-size:50px; text-align:center;'>
                         ID: {pick[0]}
                     </div>
                     """, unsafe_allow_html=True)
-                    time.sleep(0.005)  # super fast
+                    time.sleep(0.005)
                     st.rerun()
 
             if not st.session_state.drawing and st.session_state.current_display:
