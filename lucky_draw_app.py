@@ -17,18 +17,18 @@ if uploaded_file:
         else:
             st.success(f"Loaded {len(df)} entries.")
 
-            # Prepare entries as combined string from multiple columns
+            # Prepare combined string for each row
             entries = df.apply(lambda row: " | ".join(str(val) for val in row if pd.notna(val)), axis=1).tolist()
 
-            # Initialize session state
+            # Initialize session state only once
+            if 'remaining_entries' not in st.session_state:
+                st.session_state.remaining_entries = entries.copy()
             if 'drawing' not in st.session_state:
                 st.session_state.drawing = False
             if 'current_display' not in st.session_state:
                 st.session_state.current_display = None
             if 'winners' not in st.session_state:
                 st.session_state.winners = []
-            if 'remaining_entries' not in st.session_state:
-                st.session_state.remaining_entries = entries.copy()
 
             col1, col2 = st.columns(2)
             if col1.button("▶ Start Draw"):
@@ -41,25 +41,29 @@ if uploaded_file:
                     st.session_state.drawing = False
                     winner = st.session_state.current_display
                     if winner:
-                        st.session_state.winners.append(winner)
-                        st.session_state.remaining_entries.remove(winner)
+                        # Make sure we don't add duplicates
+                        if winner not in st.session_state.winners:
+                            st.session_state.winners.append(winner)
+                        # Also remove from remaining pool
+                        if winner in st.session_state.remaining_entries:
+                            st.session_state.remaining_entries.remove(winner)
 
+            # Draw loop
             placeholder = st.empty()
+            if st.session_state.drawing and st.session_state.remaining_entries:
+                while st.session_state.drawing:
+                    pick = random.choice(st.session_state.remaining_entries)
+                    st.session_state.current_display = pick
+                    placeholder.markdown(f"### 🎯 Drawing: **{pick}**")
+                    time.sleep(0.02)
+                    st.experimental_rerun()
 
-            # While drawing is active, pick random
-            while st.session_state.drawing and st.session_state.remaining_entries:
-                pick = random.choice(st.session_state.remaining_entries)
-                st.session_state.current_display = pick
-                placeholder.markdown(f"### 🎯 Drawing: **{pick}**")
-                time.sleep(0.02)  # fast rolling
-                st.experimental_rerun()
-
-            # Show latest winner
-            if not st.session_state.drawing and st.session_state.current_display and st.session_state.current_display not in st.session_state.remaining_entries:
+            # Show current winner
+            if st.session_state.current_display and st.session_state.current_display in st.session_state.winners:
                 placeholder.markdown(f"## 🏆 Winner: **{st.session_state.current_display}** 🎉")
                 st.balloons()
 
-            # Show all winners so far
+            # Show all winners
             if st.session_state.winners:
                 st.markdown("### 📝 Winners so far:")
                 for idx, winner in enumerate(st.session_state.winners, 1):
